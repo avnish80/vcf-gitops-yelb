@@ -18,6 +18,9 @@ spec:
         app: yelb
         tier: frontend
     spec:
+      hostAliases:                 # map yelb-appserver to the appserver LoadBalancer IP
+        - ip: "40.60.0.9"
+          hostnames: ["yelb-appserver"]
       containers:
         - name: yelb-ui
           image: mreferre/yelb-ui:0.7

@@ -21,6 +21,9 @@ spec:
         app: yelb
         tier: appserver
     spec:
+      hostAliases:                 # Argo CD excludes EndpointSlices; map yelb-db to the DB VM IP
+        - ip: "172.30.0.194"
+          hostnames: ["yelb-db"]
       containers:
         - name: yelb-appserver
           image: mreferre/yelb-appserver:0.5
