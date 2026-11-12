@@ -12,7 +12,7 @@ spec:
   image:
     kind: ClusterVirtualMachineImage
     name: vmi-5ab37e711e9121b34                # noble-server-cloudimg-amd64
-  storageClass: cluster-wld01-01a-optimal-datastore-default-policy-autoraid
+  storageClass: vsan-default-storage-policy
   powerState: PoweredOn
   minHardwareVersion: 17                       # image ships as HW v10
   bootstrap:

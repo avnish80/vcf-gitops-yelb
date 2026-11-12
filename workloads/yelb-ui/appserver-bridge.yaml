@@ -4,7 +4,7 @@
 #
 # ONE MANUAL GITOPS STEP: after the appserver syncs, get its LB IP with
 #   kubectl -n org2-ns1-mrrtd get svc yelb-appserver
-# then replace 192.0.2.10 below (a placeholder from the TEST-NET range) and commit.
+# then replace 40.60.0.9 below (a placeholder from the TEST-NET range) and commit.
 apiVersion: v1
 kind: Service
 metadata:
@@ -34,4 +34,4 @@ ports:
     port: 4567
 endpoints:
   - addresses:
-      - 192.0.2.10        # <-- REPLACE with the yelb-appserver LoadBalancer IP
+      - 40.60.0.9        # <-- REPLACE with the yelb-appserver LoadBalancer IP
