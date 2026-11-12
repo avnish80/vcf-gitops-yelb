@@ -3,7 +3,7 @@
 apiVersion: vmoperator.vmware.com/v1alpha5
 kind: VirtualMachineService
 metadata:
-  name: yelb-db
+  name: yelb-db-vm
   namespace: org2-ns1-mrrtd
   labels:
     app: yelb

@@ -1,0 +1,25 @@
+# Headless "yelb-db": DNS returns the VM IP directly. In this lab the VirtualMachineService
+# ClusterIP is not reachable from vSphere Pods, but the VM's own IP is.
+# VM IP: kubectl -n org2-ns1-mrrtd get vm yelb-db -o jsonpath='{.status.network.primaryIP4}'
+apiVersion: v1
+kind: Service
+metadata:
+  name: yelb-db
+  namespace: org2-ns1-mrrtd
+  labels: { app: yelb, tier: db }
+spec:
+  clusterIP: None
+  ports:
+    - { name: postgres, protocol: TCP, port: 5432, targetPort: 5432 }
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: yelb-db-direct
+  namespace: org2-ns1-mrrtd
+  labels: { app: yelb, tier: db, kubernetes.io/service-name: yelb-db }
+addressType: IPv4
+ports:
+  - { name: postgres, protocol: TCP, port: 5432 }
+endpoints:
+  - addresses: [ "172.30.0.194" ]
