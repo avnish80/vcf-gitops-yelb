@@ -27,7 +27,7 @@ spec:
           ports:
             - containerPort: 4567
           resources:
-            requests: { memory: 256Mi }
+            requests: { cpu: "0", memory: 256Mi }
             limits:   { cpu: 500m, memory: 512Mi }
 ---
 apiVersion: v1
