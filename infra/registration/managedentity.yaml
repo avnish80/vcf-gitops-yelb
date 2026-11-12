@@ -1,0 +1,20 @@
+# Registers the new VKS cluster with the org2-argo instance - the GitOps equivalent of
+# "Attach Kubernetes Cluster" in the VCFA GitOps Scope tab.
+# secretLabels lands on Argo CD's cluster secret; the ApplicationSet selects on app=yelb.
+apiVersion: argocd-service.vsphere.vmware.com/v1alpha1
+kind: ManagedEntity
+metadata:
+  name: yelb-vks
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: yelb
+spec:
+  clusterName: yelb-vks
+  targetRef:
+    apiGroup: cluster.x-k8s.io
+    kind: Cluster
+    name: yelb-vks
+    namespace: org2-ns1-mrrtd
+    project: default-project
+  secretLabels:
+    app: yelb

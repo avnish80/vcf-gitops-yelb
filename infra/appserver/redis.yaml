@@ -1,0 +1,47 @@
+# Tier 2 (cache) - Redis as a vSphere Pod. Yelb's default host name is "redis-server".
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-server
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: yelb
+    tier: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yelb
+      tier: cache
+  template:
+    metadata:
+      labels:
+        app: yelb
+        tier: cache
+    spec:
+      containers:
+        - name: redis-server
+          image: redis:4.0.2
+          ports:
+            - containerPort: 6379
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 256Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-server
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: yelb
+    tier: cache
+spec:
+  type: ClusterIP
+  selector:
+    app: yelb
+    tier: cache
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379

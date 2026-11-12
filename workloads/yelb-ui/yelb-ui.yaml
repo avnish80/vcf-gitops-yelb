@@ -1,0 +1,48 @@
+# Tier 1 - Yelb UI inside the VKS cluster (namespace "yelb", created by the ApplicationSet).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yelb-ui
+  labels:
+    app: yelb
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yelb
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: yelb
+        tier: frontend
+    spec:
+      containers:
+        - name: yelb-ui
+          image: mreferre/yelb-ui:0.7
+          env:
+            - name: UI_ENV
+              value: prod
+          ports:
+            - containerPort: 80
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 256Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yelb-ui
+  labels:
+    app: yelb
+    tier: frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: yelb
+    tier: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

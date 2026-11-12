@@ -1,0 +1,47 @@
+# Deploys the Yelb UI to every Argo CD cluster labelled app=yelb.
+# The label comes from the ManagedEntity's secretLabels, so the UI deploys itself
+# as soon as the new VKS cluster is registered - no manual attach, no hard-coded URL.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: yelb-ui
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: yelb
+spec:
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            app: yelb
+  template:
+    metadata:
+      name: 'yelb-ui-{{name}}'
+      labels:
+        app: yelb
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/avnish80/vcf-gitops-yelb.git
+        targetRevision: main
+        path: workloads/yelb-ui
+      destination:
+        server: '{{server}}'
+        namespace: yelb
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+        managedNamespaceMetadata:
+          labels:
+            # VKS enforces restricted PSA by default; nginx in yelb-ui runs as root on :80
+            pod-security.kubernetes.io/enforce: baseline
+        retry:
+          limit: 20
+          backoff:
+            duration: 30s
+            factor: 2
+            maxDuration: 5m

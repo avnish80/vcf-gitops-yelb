@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: yelb-vks-cluster
+  namespace: org2-ns1-mrrtd          # namespace of the org2-argo instance
+  labels:
+    app: yelb
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/avnish80/vcf-gitops-yelb.git
+    targetRevision: main
+    path: infra/vks-cluster
+  destination:
+    name: org2-ns1-mrrtd             # attached vSphere Namespace (via VCFA proxy)
+    namespace: org2-ns1-mrrtd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+    retry:                           # retries stand in for cross-app ordering
+      limit: 20
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m

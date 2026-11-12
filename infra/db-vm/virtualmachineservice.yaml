@@ -1,0 +1,20 @@
+# Exposes the DB VM inside the Supervisor namespace as Service "yelb-db".
+# The appserver (vSphere Pods, same namespace) uses Yelb's default host name "yelb-db".
+apiVersion: vmoperator.vmware.com/v1alpha5
+kind: VirtualMachineService
+metadata:
+  name: yelb-db
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: yelb
+    tier: db
+spec:
+  type: ClusterIP
+  selector:
+    tier: db
+    app: yelb
+  ports:
+    - name: postgres
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

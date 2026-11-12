@@ -1,0 +1,49 @@
+# Tier 2 (API) - Yelb appserver as a vSphere Pod.
+# Connects to "yelb-db" (VirtualMachineService) and "redis-server" in the same namespace.
+# Exposed as a LoadBalancer so the UI running inside the VKS cluster can reach it.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yelb-appserver
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: yelb
+    tier: appserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yelb
+      tier: appserver
+  template:
+    metadata:
+      labels:
+        app: yelb
+        tier: appserver
+    spec:
+      containers:
+        - name: yelb-appserver
+          image: mreferre/yelb-appserver:0.5
+          ports:
+            - containerPort: 4567
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits:   { cpu: 500m, memory: 512Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yelb-appserver
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: yelb
+    tier: appserver
+spec:
+  type: LoadBalancer
+  selector:
+    app: yelb
+    tier: appserver
+  ports:
+    - name: http
+      port: 4567
+      targetPort: 4567
