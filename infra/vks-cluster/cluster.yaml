@@ -29,6 +29,13 @@ spec:
         - class: node-pool
           name: np-1
           replicas: 1
+        - class: node-pool
+          name: np-apps
+          replicas: 1
+          variables:
+            overrides:
+              - name: vmClass
+                value: best-effort-large      # 4 vCPU / 16 GiB, for Online Boutique
     variables:
       - name: vmClass
         value: best-effort-medium            # 2 vCPU / 8 GiB
