@@ -1,5 +1,4 @@
-# VKS cluster that will host the Yelb UI. Shape copied from the working genai-cpu-01 cluster,
-# trimmed to 1 control plane + 1 worker.
+# VKS cluster that hosts the Yelb UI, Online Boutique and Tekton.
 # Prune=false: removing this file from Git (or deleting the Argo app) will NOT delete the cluster.
 apiVersion: cluster.x-k8s.io/v1beta2
 kind: Cluster
@@ -19,11 +18,15 @@ spec:
     serviceDomain: cluster.local
   topology:
     classRef:
-      name: builtin-generic-v3.7.0
+      name: builtin-generic-v3.8.0             # was v3.7.0
       namespace: vmware-system-vks-public
-    version: v1.36.2+vmware.2
+    version: v1.37.1+vmware.4                  # was v1.36.2+vmware.2
     controlPlane:
       replicas: 1
+      variables:
+        overrides:
+          - name: vmClass
+            value: best-effort-large           # 4 vCPU / 16 GiB; medium was CPU-starved
     workers:
       machineDeployments:
         - class: node-pool
@@ -35,10 +38,20 @@ spec:
           variables:
             overrides:
               - name: vmClass
-                value: best-effort-large      # 4 vCPU / 16 GiB, for Online Boutique
+                value: best-effort-large       # 4 vCPU / 16 GiB, for Online Boutique
+        - class: node-pool
+          name: np-ci
+          replicas: 1
+          metadata:
+            labels:
+              node.cluster.x-k8s.io/pool: ci   # copied onto the node, so Tekton builds can target it
+          variables:
+            overrides:
+              - name: vmClass
+                value: best-effort-large       # 4 vCPU / 16 GiB, for Tekton builds
     variables:
       - name: vmClass
-        value: best-effort-medium            # 2 vCPU / 8 GiB
+        value: best-effort-medium              # 2 vCPU / 8 GiB (default for np-1)
       - name: storageClass
         value: vsan-default-storage-policy
       - name: vsphereOptions
