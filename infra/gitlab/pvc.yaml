@@ -1,0 +1,18 @@
+# Data disk for GitLab, attached to the VM as a second disk and mounted at /var/opt/gitlab.
+# Prune=false: removing this file from Git must never delete the repos stored on it.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-data
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: gitlab
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: vsan-default-storage-policy
+  resources:
+    requests:
+      storage: 60Gi

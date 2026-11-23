@@ -16,8 +16,13 @@ spec:
   storageClass: vsan-default-storage-policy
   powerState: PoweredOn
   minHardwareVersion: 17
-  advanced:
-    bootDiskCapacity: 60Gi                     # image ships with 10Gi; GitLab needs more
+  # The image is deployed as a linked clone, so its 10Gi boot disk cannot be grown.
+  # GitLab's data (repos, Postgres, Redis, uploads) goes on its own PVC instead,
+  # mounted at /var/opt/gitlab by cloud-init.
+  volumes:
+    - name: gitlab-data
+      persistentVolumeClaim:
+        claimName: gitlab-data
   bootstrap:
     cloudInit:
       rawCloudConfig:
