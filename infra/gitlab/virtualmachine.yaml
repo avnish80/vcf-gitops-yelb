@@ -1,0 +1,25 @@
+# GitLab CE as a VM Service VM. cloud-init installs GitLab Omnibus on first boot.
+# The cloud-init Secret (gitlab-cloudinit) holds the passwords, so it is created by hand
+# from cloud-init.tpl and is NOT stored in Git.
+apiVersion: vmoperator.vmware.com/v1alpha5
+kind: VirtualMachine
+metadata:
+  name: gitlab
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: gitlab
+spec:
+  className: best-effort-large                 # 4 vCPU / 16 GiB
+  image:
+    kind: ClusterVirtualMachineImage
+    name: vmi-5ab37e711e9121b34                # noble-server-cloudimg-amd64
+  storageClass: vsan-default-storage-policy
+  powerState: PoweredOn
+  minHardwareVersion: 17
+  advanced:
+    bootDiskCapacity: 60Gi                     # image ships with 10Gi; GitLab needs more
+  bootstrap:
+    cloudInit:
+      rawCloudConfig:
+        name: gitlab-cloudinit
+        key: user-data

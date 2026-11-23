@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitlab
+  namespace: org2-ns1-mrrtd
+  labels:
+    app: gitlab
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/avnish80/vcf-gitops-yelb.git
+    targetRevision: main
+    path: infra/gitlab
+    directory:
+      include: '*.yaml'
+  destination:
+    name: org2-ns1-mrrtd
+    namespace: org2-ns1-mrrtd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+    retry:
+      limit: 20
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m
