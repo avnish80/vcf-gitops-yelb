@@ -65,3 +65,11 @@ spec:
           cniRef:
             name: antrea
             namespace: vmware-system-vks-public
+      - name: osConfiguration
+        value:
+          trust:
+            additionalTrustedCAs:                # nodes trust the Regional Harbor (10.150.4.10)
+              - caCert:
+                  secretRef:
+                    name: yelb-vks-harbor-ca         # harbor-ca-secret.yaml in this folder
+                    key: harbor-ca
